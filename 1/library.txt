@@ -1,0 +1,137 @@
+cqlsh> create keyspace library with replication={'class':'SimpleStrategy','replication_factor':1};
+cqlsh> use library;
+cqlsh:library> create table libraryinfo(stud_id int primary key, counter_value counter, Stud_Name text, Book-Name text, Book-Id int, Date_of_issue timestamp);
+SyntaxException: line 1:93 no viable alternative at input '-' (... counter, Stud_Name text, Book[-]...)
+cqlsh:library> create table libraryinfo(stud_id int primary key, counter_value counter, Stud_Name text, Book_Name text, Book-Id int, Date_of_issue timestamp);
+SyntaxException: line 1:109 no viable alternative at input '-' (... text, Book_Name text, Book[-]...)
+cqlsh:library> create table libraryinfo(stud_id int primary key, counter_value counter, Stud_Name text, Book_Name text, Book_id int, Date_of_issue timestamp);
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot mix counter and non counter columns in the same table"
+cqlsh:library> create table library_info( stud_id int, counter_val counter, stud_name text, book_name text, book_id int, date_of_issue text, primary key(stud_id, stud_name, book_name, book_id, date_of_issue));
+cqlsh:library> update library_info set counter_val=counter_val+1 where stud_id=1 and stud_name='Charlie' and book_name='BDA' and book_id=1023 and date_of_issue='20-1-2021';
+cqlsh:library> select * from library_info;
+
+ stud_id | stud_name | book_name | book_id | date_of_issue | counter_val
+---------+-----------+-----------+---------+---------------+-------------
+       1 |   Charlie |       BDA |    1023 |     20-1-2021 |           1
+
+(1 rows)
+cqlsh:library> update library_info set counter_val=counter_val+1 where stud_id=2 and stud_name='Darvin' and book_name='TFCS' and book_id=2212 and date_of_issue='1-6-2021';
+cqlsh:library> update library_info set counter_val=counter_val+1 where stud_id=5 and stud_name='Robert' and book_name='Maths' and book_id=2000 and date_of_issue='13-6-2022';
+cqlsh:library> update library_info set counter_val=counter_val+1 where stud_id=5 and stud_name='Robert' and book_name='Maths' and book_id=2000 and date_of_issue='13-6-2022';
+cqlsh:library> select * from library_info;
+
+ stud_id | stud_name | book_name | book_id | date_of_issue | counter_val
+---------+-----------+-----------+---------+---------------+-------------
+       5 |    Robert |     Maths |    2000 |     13-6-2022 |           2
+       1 |   Charlie |       BDA |    1023 |     20-1-2021 |           1
+       2 |    Darvin |      TFCS |    2212 |      1-6-2021 |           1
+
+(3 rows)
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'BDA/Lab1/library.csv';
+Using 3 child processes
+Can't open 'BDA/Lab1/library.csv' for writing: [Errno 2] No such file or directory: 'BDA/Lab1/library.csv'
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'Bda/library.csv';
+Using 3 child processes
+Can't open 'Bda/library.csv' for writing: [Errno 2] No such file or directory: 'Bda/library.csv'
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'Bda/library.csv';
+Using 3 child processes
+Can't open 'Bda/library.csv' for writing: [Errno 2] No such file or directory: 'Bda/library.csv'
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'Desktop/Bda/library.csv';
+Using 3 child processes
+Can't open 'Desktop/Bda/library.csv' for writing: [Errno 2] No such file or directory: 'Desktop/Bda/library.csv'
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'C:\Users\KTGURUMURTY\Desktop\Bda\library.csv';
+Using 3 child processes
+
+Starting copy of library.library_info with columns [stud_id, stud_name, book_name, book_id, date_of_issue, counter_val].
+Processed: 3 rows; Rate:       1 rows/s; Avg. rate:       0 rows/s
+3 rows exported to 1 files in 20.361 seconds.
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'C:\Users\KTGURUMURTY\Desktop\Bda\library.csv';
+Using 3 child processes
+
+Starting copy of library.library_info with columns [stud_id, stud_name, book_name, book_id, date_of_issue, counter_val].
+Processed: 3 rows; Rate:       1 rows/s; Avg. rate:       1 rows/s
+3 rows exported to 1 files in 3.174 seconds.
+cqlsh:library> update library_info set counter_val=counter_val+1 where stud_id=1 and stud_name='Charlie' and book_name='BDA' and book_id=1023 and date_of_issue='20-1-2021';
+cqlsh:library> update library_info set counter_val=counter_val+1 where stud_id=5 and stud_name='Robert' and book_name='Maths' and book_id=2000 and date_of_issue='13-6-2022';
+cqlsh:library> select * from library_info;
+
+ stud_id | stud_name | book_name | book_id | date_of_issue | counter_val
+---------+-----------+-----------+---------+---------------+-------------
+       5 |    Robert |     Maths |    2000 |     13-6-2022 |           3
+       1 |   Charlie |       BDA |    1023 |     20-1-2021 |           2
+       2 |    Darvin |      TFCS |    2212 |      1-6-2021 |           1
+
+(3 rows)
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) to 'C:\Users\KTGURUMURTY\Desktop\Bda\library.csv';
+Using 3 child processes
+
+Starting copy of library.library_info with columns [stud_id, stud_name, book_name, book_id, date_of_issue, counter_val].
+Processed: 3 rows; Rate:       5 rows/s; Avg. rate:       2 rows/s
+3 rows exported to 1 files in 1.958 seconds.
+cqlsh:library> copy library_info(stud_id, stud_name, book_name, book_id, date_of_issue, counter_val) from 'C:\Users\KTGURUMURTY\Desktop\Bda\library.csv';
+Using 3 child processes
+
+Starting copy of library.library_info with columns [stud_id, stud_name, book_name, book_id, date_of_issue, counter_val].
+PPProcess ImportProcess-11:    0 rows/s; Avg. rate:       0 rows/s
+rocess ImportProcess-10:
+TTrocess ImportProcess-12:
+raceback (most recent call last):
+raceback (most recent call last):
+T raceback (most recent call last):
+   File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+ File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+ File "C:\Python27\lib\multiprocessing\process.py", line 267, in _bootstrap
+    self.run()
+      self.run()
+   self.run()
+ File "C:\apache-cassandra-3.11.10\bin\..\pylib\cqlshlib\copyutil.py", line 2330, in run
+   File "C:\apache-cassandra-3.11.10\bin\..\pylib\cqlshlib\copyutil.py", line 2330, in run
+ File "C:\apache-cassandra-3.11.10\bin\..\pylib\cqlshlib\copyutil.py", line 2330, in run
+    self.close()
+     self.close()
+     self.close()
+ File "C:\apache-cassandra-3.11.10\bin\..\pylib\cqlshlib\copyutil.py", line 2334, in close
+ File "C:\apache-cassandra-3.11.10\bin\..\pylib\cqlshlib\copyutil.py", line 2334, in close
+   File "C:\apache-cassandra-3.11.10\bin\..\pylib\cqlshlib\copyutil.py", line 2334, in close
+    self._session.cluster.shutdown()
+    self._session.cluster.shutdown()
+    self._session.cluster.shutdown()
+  File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+  File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+ File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 1259, in shutdown
+      self.control_connection.shutdown()
+   self.control_connection.shutdown()
+   self.control_connection.shutdown()
+   File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+  File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+  File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\cluster.py", line 2850, in shutdown
+    self._connection.close()
+    self._connection.close()
+    self._connection.close()
+  File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+  File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+ File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 373, in close
+     AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+   AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+      AsyncoreConnection.create_timer(0, partial(asyncore.dispatcher.close, self))
+ File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+ File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+    File "C:\apache-cassandra-3.11.10\bin\..\lib\cassandra-driver-internal-only-3.11.0-bb96859b.zip\cassandra-driver-3.11.0-bb96859b\cassandra\io\asyncorereactor.py", line 335, in create_timer
+   cls._loop.add_timer(timer)
+   cls._loop.add_timer(timer)
+ A   cls._loop.add_timer(timer)
+AttributeError: 'NoneType' object has no attribute 'add_timer'
+AttributeError: 'NoneType' object has no attribute 'add_timer'
+ttributeError: 'NoneType' object has no attribute 'add_timer'
+Processed: 3 rows; Rate:       0 rows/s; Avg. rate:       0 rows/s
+3 rows imported from 1 files in 13.723 seconds (0 skipped).
+cqlsh:library> select * from library_info;
+
+ stud_id | stud_name | book_name | book_id | date_of_issue | counter_val
+---------+-----------+-----------+---------+---------------+-------------
+       5 |    Robert |     Maths |    2000 |     13-6-2022 |           6
+       1 |   Charlie |       BDA |    1023 |     20-1-2021 |           4
+       2 |    Darvin |      TFCS |    2212 |      1-6-2021 |           2
+
+(3 rows)
+cqlsh:library>

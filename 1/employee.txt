@@ -1,0 +1,160 @@
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining | dept_name | designation | emp_name | salary
+--------+-----------------+-----------+-------------+----------+--------
+
+(0 rows)
+cqlsh:employee> insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... ;
+SyntaxException: line 2:0 mismatched input ';' expecting K_VALUES (...,dept_name,designation,emp_name,salary)[;])
+cqlsh:employee> begin batch
+            ... insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(1,'2012-02-21','Manegement','CEO','John',15000.00)
+            ... apply batch;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name  | designation | emp_name | salary
+--------+---------------------------------+------------+-------------+----------+--------
+      1 | 2012-02-20 18:30:00.000000+0000 | Manegement |         CEO |     John |  15000
+
+(1 rows)
+cqlsh:employee> begin batch
+            ... insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(2,'2013-02-2','Human Resource','Chairman','Grisham',14560.00)
+            ... insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(3,'2013-07-4','Finance','CFO','Ferry',14000.50)
+            ... insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(4,'2014-01-9','Finance','CFO','Marry',13000.50)
+            ... apply batch;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name      | designation | emp_name | salary
+--------+---------------------------------+----------------+-------------+----------+---------
+      1 | 2012-02-20 18:30:00.000000+0000 |     Manegement |         CEO |     John |   15000
+      2 | 2013-02-01 18:30:00.000000+0000 | Human Resource |    Chairman |  Grisham |   14560
+      4 | 2014-01-08 18:30:00.000000+0000 |        Finance |         CFO |    Marry | 13000.5
+      3 | 2013-07-03 18:30:00.000000+0000 |        Finance |         CFO |    Ferry | 14000.5
+
+(4 rows)
+cqlsh:employee> begin batch
+            ... insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(121,'2015-10-10','Marketing','CFO','Jessica',13250.50)
+            ... apply batch;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name      | designation | emp_name | salary
+--------+---------------------------------+----------------+-------------+----------+---------
+      1 | 2012-02-20 18:30:00.000000+0000 |     Manegement |         CEO |     John |   15000
+      2 | 2013-02-01 18:30:00.000000+0000 | Human Resource |    Chairman |  Grisham |   14560
+      4 | 2014-01-08 18:30:00.000000+0000 |        Finance |         CFO |    Marry | 13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 |      Marketing |         CFO |  Jessica | 13250.5
+      3 | 2013-07-03 18:30:00.000000+0000 |        Finance |         CFO |    Ferry | 14000.5
+
+(5 rows)
+cqlsh:employee> update empInfo set emp_name='David' , dept_name='Sales department' where emp_id=121;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation | emp_name | salary
+--------+---------------------------------+------------------+-------------+----------+---------
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |         CEO |     John |   15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |    Chairman |  Grisham |   14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |         CFO |    Marry | 13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |         CFO |    David | 13250.5
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |         CFO |    Ferry | 14000.5
+
+(5 rows)
+cqlsh:employee> update empInfo set salary=20000.48 where emp_id=121;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation | emp_name | salary
+--------+---------------------------------+------------------+-------------+----------+----------
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |         CEO |     John |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |    Chairman |  Grisham |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |         CFO |    Marry |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |         CFO |    David | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |         CFO |    Ferry |  14000.5
+
+(5 rows)
+cqlsh:employee> select * from empInfo  order by salary;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="ORDER BY is only supported when the partition key is restricted by an EQ or an IN."
+cqlsh:employee> alter table empInfo add project set<text>;
+cqlsh:employee> update empInfo set project=project+{'python','c'} where emp_id=1;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation | emp_name | project         | salary
+--------+---------------------------------+------------------+-------------+----------+-----------------+----------
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |         CEO |     John | {'c', 'python'} |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |    Chairman |  Grisham |            null |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |         CFO |    Marry |            null |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |         CFO |    David |            null | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |         CFO |    Ferry |            null |  14000.5
+
+(5 rows)
+cqlsh:employee> update empInfo set project=project+{'java'} where emp_id=2;
+cqlsh:employee> update empInfo set project=project+{'big data','cassandra','visualization'} where emp_id=3;
+cqlsh:employee> update empInfo set project=project+{'cassandra','java'} where emp_id=4;
+cqlsh:employee> update empInfo set project=project+{'big data'} where emp_id=121;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation | emp_name | project                                    | salary
+--------+---------------------------------+------------------+-------------+----------+--------------------------------------------+----------
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |         CEO |     John |                            {'c', 'python'} |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |    Chairman |  Grisham |                                   {'java'} |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |         CFO |    Marry |                      {'cassandra', 'java'} |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |         CFO |    David |                               {'big data'} | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |         CFO |    Ferry | {'big data', 'cassandra', 'visualization'} |  14000.5
+
+(5 rows)
+cqlsh:employee> insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(5,'2016-12-20','Marketing','Senior manager','Henry',25000.50)
+            ... using ttl 10;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation | emp_name | project                                    | salary
+--------+---------------------------------+------------------+-------------+----------+--------------------------------------------+----------
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |         CEO |     John |                            {'c', 'python'} |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |    Chairman |  Grisham |                                   {'java'} |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |         CFO |    Marry |                      {'cassandra', 'java'} |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |         CFO |    David |                               {'big data'} | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |         CFO |    Ferry | {'big data', 'cassandra', 'visualization'} |  14000.5
+
+(5 rows)
+cqlsh:employee> insert into empInfo(emp_id,date_of_joining,dept_name,designation,emp_name,salary)
+            ... values(5,'2016-12-20','Marketing','Senior manager','Henry',25000.50)
+            ... using ttl 30;
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation    | emp_name | project                                    | salary
+--------+---------------------------------+------------------+----------------+----------+--------------------------------------------+----------
+      5 | 2016-12-19 18:30:00.000000+0000 |        Marketing | Senior manager |    Henry |                                       null |  25000.5
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |            CEO |     John |                            {'c', 'python'} |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |       Chairman |  Grisham |                                   {'java'} |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |            CFO |    Marry |                      {'cassandra', 'java'} |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |            CFO |    David |                               {'big data'} | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |            CFO |    Ferry | {'big data', 'cassandra', 'visualization'} |  14000.5
+
+(6 rows)
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation    | emp_name | project                                    | salary
+--------+---------------------------------+------------------+----------------+----------+--------------------------------------------+----------
+      5 | 2016-12-19 18:30:00.000000+0000 |        Marketing | Senior manager |    Henry |                                       null |  25000.5
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |            CEO |     John |                            {'c', 'python'} |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |       Chairman |  Grisham |                                   {'java'} |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |            CFO |    Marry |                      {'cassandra', 'java'} |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |            CFO |    David |                               {'big data'} | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |            CFO |    Ferry | {'big data', 'cassandra', 'visualization'} |  14000.5
+
+(6 rows)
+cqlsh:employee> select * from empInfo;
+
+ emp_id | date_of_joining                 | dept_name        | designation | emp_name | project                                    | salary
+--------+---------------------------------+------------------+-------------+----------+--------------------------------------------+----------
+      1 | 2012-02-20 18:30:00.000000+0000 |       Manegement |         CEO |     John |                            {'c', 'python'} |    15000
+      2 | 2013-02-01 18:30:00.000000+0000 |   Human Resource |    Chairman |  Grisham |                                   {'java'} |    14560
+      4 | 2014-01-08 18:30:00.000000+0000 |          Finance |         CFO |    Marry |                      {'cassandra', 'java'} |  13000.5
+    121 | 2015-10-09 18:30:00.000000+0000 | Sales department |         CFO |    David |                               {'big data'} | 20000.48
+      3 | 2013-07-03 18:30:00.000000+0000 |          Finance |         CFO |    Ferry | {'big data', 'cassandra', 'visualization'} |  14000.5
+
+(5 rows)
+cqlsh:employee>

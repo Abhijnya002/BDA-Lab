@@ -1,7 +1,8 @@
-/*view database*/
+1./*view database*/
+
 show dbs
 
-/* insertion*/
+2./* insertion*/
 
 db.students.insertMany([
 {
@@ -35,7 +36,7 @@ db.students.insertMany([
 ])
 
 
-/*update*/
+3./*update*/
 
 db.students.updateOne(
       { rollno:10},
@@ -43,10 +44,10 @@ db.students.updateOne(
    );
 
 
-/*export*/
+4./*export*/
 
 mongoexport --db=students --collection=students --type=csv --fields=name,rollno,age,contact_no,email_id --out=C:\Users\KTGURUMURTY\Desktop\mongo\students.csv
 
-/*drop*/
+5./*drop*/
 
 db.students.drop()

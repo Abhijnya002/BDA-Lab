@@ -1,0 +1,52 @@
+/*view database*/
+show dbs
+
+/* insertion*/
+
+db.students.insertMany([
+{
+ "name" : "John",
+    "rollno" : 15,
+    "age" : 20,
+    "contact_no" : NumberLong(9123456789),
+    "email_id" : "john100@gmail.com"
+},
+    {
+    "name" : "Clay Jensen",
+    "rollno" : 17,
+    "age" : 21,
+    "contact_no" : NumberLong(9000123567),
+    "email_id" : "clay@gmail.com"
+},
+{
+        "name" : "ABC",
+    "rollno" : 11,
+    "age" : 20,
+    "contact_no" : NumberLong(93450123567),
+    "email_id" : "abc@gmail.com"
+},
+{
+       "name" : "Jessica",
+    "rollno" : 10,
+    "age" : 18,
+    "contact_no" : NumberLong(9080127767),
+    "email_id" : "jessica@gmail.com"
+}
+])
+
+
+/*update*/
+
+db.students.updateOne(
+      { rollno:10},
+      { $set: { "email_id" : "david@gmail.com" } }
+   );
+
+
+/*export*/
+
+mongoexport --db=students --collection=students --type=csv --fields=name,rollno,age,contact_no,email_id --out=C:\Users\KTGURUMURTY\Desktop\mongo\students.csv
+
+/*drop*/
+
+db.students.drop()

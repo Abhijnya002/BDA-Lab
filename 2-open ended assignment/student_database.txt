@@ -43,11 +43,16 @@ db.students.updateOne(
       { $set: { "email_id" : "david@gmail.com" } }
    );
 
+4./*update*/
+ db.students.updateOne(
+      { rollno:11 ,name:"ABC"},
+      { $set: { "name":"FEM"  } }
+   );
 
-4./*export*/
+5./*export*/
 
 mongoexport --db=students --collection=students --type=csv --fields=name,rollno,age,contact_no,email_id --out=C:\Users\KTGURUMURTY\Desktop\mongo\students.csv
 
-5./*drop*/
+6./*drop*/
 
 db.students.drop()
